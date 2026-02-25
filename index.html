@@ -2003,34 +2003,48 @@ function applyReadOnlyMode() {
   if (!isVisitor) return;
   const style = document.createElement('style');
   style.textContent = `
-    .controls { display: none !important; }
-    .person-search-bar { display: none !important; }
-    .card-actions { display: none !important; }
-    .card { cursor: default !important; }
-    .tier-header { pointer-events: none !important; }
+    /* Hide add/delete/sync/export/import/lookup — keep random, stats, wrapped */
+    #lookupBtn,
+    #githubSyncBtn,
+    #exportBtn,
+    #importBtn,
+    #toggleCompact,
+    .person-search-bar,
+    .card-actions,
+    #mMoreLookup,
+    #mMoreGithub,
+    #mMoreExport,
+    #mMoreImport,
+    #mMoreCompact { display: none !important; }
+
+    /* No drag cursor on cards */
+    .card { cursor: pointer !important; }
+
+    /* Read-only banner */
     .readonly-banner {
       text-align: center;
-      padding: 8px 16px;
-      font-size: 12px;
+      padding: 7px 16px;
+      font-size: 11px;
       color: var(--muted);
       background: var(--bg2);
       border-bottom: 1px solid var(--border);
-      letter-spacing: 1px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      letter-spacing: 2px;
+      text-transform: uppercase;
     }
   `;
   document.head.appendChild(style);
 
+  // Block drag & drop
   document.addEventListener('dragstart', e => {
     if (e.target.closest('.card')) e.preventDefault();
   }, true);
 
+  // Banner just below the sticky controls bar
   const banner = document.createElement('div');
   banner.className = 'readonly-banner';
-  banner.textContent = "👁  Kishal's Movie Tier List — Read Only";
-  document.body.insertAdjacentElement('afterbegin', banner);
+  banner.textContent = "👁  Kishal's Movie Tier List";
+  const controls = document.querySelector('.controls');
+  if (controls) controls.insertAdjacentElement('afterend', banner);
 }
 let ghGistId = localStorage.getItem(GH_GIST_ID_KEY) || '';
 let ghUser = '';
